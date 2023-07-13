@@ -1,10 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Aug  7 11:29:55 2018
 
-@author: feebr01
-"""
 import shapely
 import matplotlib.pyplot as plt
 import geopandas as gpd
@@ -55,7 +49,6 @@ water_df = gpd.read_file('LakesAndRivers.dbf')
 # show where all the water is
 water_df.plot()
 
-
 # take cedar lake out
 cedar_lake = water_df.query('NAME_DNR == "Cedar"')
 cedar_lake = cedar_lake.iloc[0:1, :]
@@ -65,12 +58,12 @@ ax = cedar_lake.plot(color = 'red')
 buff_cedar_lake.plot(ax = ax, color = 'green', alpha = 0.5)
 plt.show()
 
-
 # start searching for overlaps - set the spatial index of what you want to search
 spatial_index = mpls.sindex
 
-
-##################### create a boundary box for the buffered cedar lake polygon
+# =============================================================================
+# create boundary box
+# =============================================================================
 cedar_bb = buff_cedar_lake.bounds
 cedar_bb = list(cedar_bb.itertuples(index=False, name =None))
 # create a shape from the bounds and plot it
@@ -80,8 +73,6 @@ from descartes import PolygonPatch
 # convert boundary box into a shape - takes tuple only as argument
 cedar_bb = cedar_bb[0]
 cedar_box = box(cedar_bb[0], cedar_bb[1], cedar_bb[2],cedar_bb[3])
-
-
 
 # plot the buffered box around the lake for 4 conditions vs. checking all areas
 fig = plt.figure()
@@ -97,7 +88,9 @@ possible_matches_index = list(spatial_index.intersection(cedar_bb))
 possible_matches_df = mpls.iloc[possible_matches_index, :]
 
 
-############################## Intersect with lake shape itself, more precise match
+# =============================================================================
+# intersection
+# =============================================================================
 # create polygon object from the buff_cedar_lake dataframe by just selecting its shape
 buffered_cedar_poly = buff_cedar_lake.iloc[0]
 precise_matches = possible_matches_df[possible_matches_df.intersects(buffered_cedar_poly)]
@@ -109,7 +102,9 @@ cedar_lake_parcels['LAKE_NAME'] = 'Cedar Lake'
 
 
 
-############################## Some calculations - centroids etc.
+# =============================================================================
+# misc calcs
+# =============================================================================
 # finding centroid
 cedar_lake_parcels['Parcel_Centroid'] = cedar_lake_parcels.centroid
 
