@@ -4,30 +4,28 @@ world = geopandas.read_file(geopandas.datasets.get_path('naturalearth_lowres'))
 cities = geopandas.read_file(geopandas.datasets.get_path('naturalearth_cities'))
 
 
-##################################################################### BASICS
+# =============================================================================
+# basic api
+# =============================================================================
 
 # find the column where geometry exists
 world.geometry.name
 
-
 # preview using plot
 world.plot()
-
 
 # create centroids of each country
 world['centroids'] = world.centroid
 
-
 # must reset the geometry (permanently or temporarily) to plot
 world.set_geometry('centroids').plot()      #temp: precede with 'world =' to reset
-
 
 # define a column in the plot to get a choropleth map. Matplotlib cmap for color
 world.plot(column = 'pop_est', cmap = 'coolwarm')
 
-
-
-##################################################################### LAYERING
+# =============================================================================
+# layering
+# =============================================================================
 # bring in cities layer
 cities.plot(marker = '*', color = 'green', markersize = 5)
 
